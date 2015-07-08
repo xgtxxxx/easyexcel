@@ -10,15 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-
+import xgt.util.excel.Config;
 import xgt.util.excel.Pager;
-import xgt.util.excel.Region;
-import xgt.util.excel.SheetConfig;
 import xgt.util.excel.Template;
 import xgt.util.excel.TemplateFactory;
 import xgt.util.excel.templates.DefaultTemplate;
-import xgt.util.excel.utils.StyleDecorate;
 
 /**
  * @author Gavin
@@ -43,36 +39,11 @@ public class Test2 {
 
 		Pager pager = new MyPager("测试", header, list);
 
-		Template t = TemplateFactory.createTemplate(DefaultTemplate.class,
-				pager);
-
-		CellStyle style = t.createStyle();
-		StyleDecorate.decorateAsHeader(style, t.createFont());
-		StyleDecorate.decorateBgYellow(style);
-		t.setStyle(style, new Region(0, 0, 0, 6));
-
-		style = t.createStyle();
-		t.setStyle(StyleDecorate.decorateAs￥(style, t.createDataFormat()),
-				new Region(1, 6, 4, 4));
-
-		style = t.createStyle();
-		t.setStyle(
-				StyleDecorate.decorateAsPercentate(style, t.createDataFormat()),
-				new Region(1, 6, 3, 3));
-
-		style = t.createStyle();
-		t.setStyle(StyleDecorate.decorateAsDate(style, t.createDataFormat()),
-				new Region(1, 6, 6, 6));
-
-		t.setWidthBorder(true, new Region(1, 6, 0, 6));
-
-		SheetConfig config = new SheetConfig();
-
-		config.addHeightConfig(0, 30f);
-		config.addWidthConfig(2, SheetConfig.DEFAULT_WIDTH * 3);
-		config.addWidthConfig(6, SheetConfig.DEFAULT_WIDTH + 3);
-		t.setConfig(config);
-
+		Template t = TemplateFactory.createTemplate(DefaultTemplate.class,pager);
+		
+		Config config = t.getConfig();
+		config.setDefaultWidth(Config.DEFAULT_WIDTH+5);
+		
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream("D:/text.xls");

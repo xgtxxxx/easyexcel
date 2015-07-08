@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 
+import xgt.util.excel.Config;
 import xgt.util.excel.Region;
-import xgt.util.excel.SheetConfig;
 import xgt.util.excel.Template;
 import xgt.util.excel.TemplateFactory;
 import xgt.util.excel.templates.DefaultTemplate;
@@ -41,29 +41,24 @@ public class Test1 {
 		}
 		
 		Template t = TemplateFactory.createTemplate(DefaultTemplate.class, header, list);
-		
-		CellStyle style = t.createStyle();
-		StyleDecorate.decorateAsHeader(style, t.createFont());
+		Config config = t.getConfig();
+		CellStyle style = config.createStyle();
+		StyleDecorate.decorateAsHeader(style, config.createFont());
 		StyleDecorate.decorateBgYellow(style);
-		t.setStyle(style, new Region(0,0,0,6));
+		config.setStyle(style, new Region(0,0,0,6));
 		
-		style = t.createStyle();
-		t.setStyle(StyleDecorate.decorateAs￥(style, t.createDataFormat()), new Region(1,6,4,4));
+		style = config.createStyle();
+		config.setStyle(StyleDecorate.decorateAs￥(style, config.createDataFormat()), new Region(1,6,4,4));
 		
-		style = t.createStyle();
-		t.setStyle(StyleDecorate.decorateAsPercentate(style, t.createDataFormat()), new Region(1,6,3,3));
+		style = config.createStyle();
+		config.setStyle(StyleDecorate.decorateAsPercentate(style, config.createDataFormat()), new Region(1,6,3,3));
 		
-		style = t.createStyle();
-		t.setStyle(StyleDecorate.decorateAsDate(style, t.createDataFormat()), new Region(1,6,6,6));
+		style = config.createStyle();
+		config.setStyle(StyleDecorate.decorateAsDate(style, config.createDataFormat()), new Region(1,6,6,6));
 		
-		t.setWidthBorder(true,new Region(1,6,0,6));
-		
-		SheetConfig config = new SheetConfig();
-		
-		config.addHeightConfig(0, 30f);
-		config.addWidthConfig(2, SheetConfig.DEFAULT_WIDTH*3);
-		config.addWidthConfig(6, SheetConfig.DEFAULT_WIDTH+3);
-		t.setConfig(config);
+		config.addRowHeight(0, 30f);
+		config.addColumnWidth(2, Config.DEFAULT_WIDTH*3);
+		config.addColumnWidth(6, Config.DEFAULT_WIDTH+3);
 		
 		FileOutputStream fos = null;
 		try {

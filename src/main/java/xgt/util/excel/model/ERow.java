@@ -7,15 +7,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import xgt.util.excel.SheetConfig;
-
 /**
  * @author Gavin
  *
  */
 public final class ERow {
-	
-	private float rowHeight = 0f;
 	
 	private int rowIndex;
 
@@ -58,23 +54,36 @@ public final class ERow {
 		this.rowIndex = rowIndex;
 	}
 	
-	public static ERow newInstance(String title, int rowIndex) {
+	public static ERow newBlankInstance(int rowIndex) {
 		ERow row = new ERow();
 		row.setRowIndex(rowIndex);
-		row.addCell(title, 0);
-		row.setRowHeight(SheetConfig.DEFAULT_HEIGHT*2);
+		row.setType(RowType.BLANK);
 		return row;
 	}
 	
-	public static ERow newInstance(int rowIndex) {
+	public static ERow newTitleInstance(String title, int rowIndex) {
 		ERow row = new ERow();
 		row.setRowIndex(rowIndex);
+		row.addCell(title, 0);
+		row.setType(RowType.TITLE);
+		return row;
+	}
+	
+	public static ERow newHeaderInstance(String[] header,int rowIndex) {
+		ERow row = new ERow();
+		row.setRowIndex(rowIndex);
+		row.setType(RowType.HEADER);
+		int index = 0;
+		for (String value : header) {
+			row.addCell(value, index++);
+		}
 		return row;
 	}
 
-	public static ERow newInstance(Object[] datas, int rowIndex) {
+	public static ERow newBodyInstance(Object[] datas, int rowIndex) {
 		ERow row = new ERow();
 		row.setRowIndex(rowIndex);
+		row.setType(RowType.BODY);
 		int index = 0;
 		for (Object value : datas) {
 			row.addCell(value, index++);
@@ -107,37 +116,5 @@ public final class ERow {
 	public void setType(RowType type) {
 		this.type = type;
 	}
-
-	public enum RowType {
-		TITLE("title"), HEADER("header"), FOOTER("footer"), BLANK("blank"), DEFAULT("default");
-		
-		private String name;
-
-		private RowType(String name) {
-			this.name = name;
-		}
-
-		/**
-		 * @return the name
-		 */
-		public String getName() {
-			return name;
-		}
-	}
-
-	/**
-	 * @return the rowHeight
-	 */
-	public float getRowHeight() {
-		return rowHeight;
-	}
-
-	/**
-	 * @param rowHeight the rowHeight to set
-	 */
-	public void setRowHeight(float rowHeight) {
-		this.rowHeight = rowHeight;
-	}
-
 
 }

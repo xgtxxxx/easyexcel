@@ -18,5 +18,4 @@ public interface Pager {
 	
 	public Collection<Object[]> getBody();
 	
-	public boolean isBorderContents();
 }

@@ -21,11 +21,12 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import xgt.util.common.DateUtil;
 import xgt.util.easyexcel.last.ExcelCellRangeAddress;
+import xgt.util.excel.Config;
 import xgt.util.excel.Region;
-import xgt.util.excel.SheetConfig;
 import xgt.util.excel.Template;
 import xgt.util.excel.model.ECell;
 import xgt.util.excel.model.ERow;
+import xgt.util.excel.model.RowType;
 import xgt.util.excel.utils.StyleDecorate;
 
 /**
@@ -36,31 +37,13 @@ public class DefaultTemplate extends Template {
 	
 	private Workbook wb = new HSSFWorkbook();
 	
-	private CellStyle defaultStyle = null;
+	private Config config;
 	
-	@Override
-	protected CellStyle getDefaultStyle() {
-		return defaultStyle==null?wb.createCellStyle():defaultStyle;
-	}
-	
-	@Override
-	public CellStyle createStyle() {
-		return wb.createCellStyle();
-	}
-	
-	@Override
-	public Font createFont() {
-		return wb.createFont();
-	}
-	
-	@Override
-	public DataFormat createDataFormat() {
-		return wb.createDataFormat();
-	}
+	private final int ROW_TITLE = -1;
 	
 	@Override
 	public void build(OutputStream os) throws IOException {
-		Sheet sheet = wb.createSheet(getName());
+		Sheet sheet = wb.createSheet(getName()==null?"sheet":getName());
 		initSheetWidthConfig(sheet);
 		buildRows(sheet);
 		setMerge(sheet);
@@ -68,26 +51,33 @@ public class DefaultTemplate extends Template {
 	}
 	
 	private void initSheetWidthConfig(Sheet sheet){
-		SheetConfig config = this.getConfig();
-		for (int index : config.getKeysOfWidths()) {
-			sheet.setColumnWidth(index, config.getWidth(index)*256);
+		Config config = getConfig();
+		sheet.setDefaultColumnWidth(config.getDefaultWidth()*256);
+		sheet.setDefaultRowHeightInPoints(config.getDefaultHeight());
+		for (int index : config.getKeysOfWidth()) {
+			sheet.setColumnWidth(index, config.getColumnWidth(index)*256);
 		}
 	}
 	
 	private void buildRows(Sheet sheet){
-		SheetConfig config = this.getConfig();
+		Config config = this.getConfig();
 		for (ERow er : getRows()) {
 			Row row = sheet.createRow(er.getRowIndex());
-			if(er.getRowHeight()>0f){
-				row.setHeightInPoints(er.getRowHeight());
+			if(er.getType()==RowType.TITLE){
+				row.setHeightInPoints(config.getRowHeight(ROW_TITLE));
 			}else{
-				row.setHeightInPoints(config.getHeight(er.getRowIndex()));
+				row.setHeightInPoints(config.getRowHeight(er.getRowIndex()));
 			}
 			buildCells(row,er);
 		}
 	}
 	
 	private void buildCells(Row row,ERow er){
+		Config config = this.getConfig();
+		CellStyle style = config.getStyle(er.getType());
+		if(config.isBorder(er.getType())){
+			StyleDecorate.addBorder(style);
+		}
 		for (ECell ec : er.getCells()) {
 			Cell cell = row.createCell(ec.getColumnIndex());
 			Object v = ec.getValue();
@@ -104,11 +94,6 @@ public class DefaultTemplate extends Template {
 			}else{
 				cell.setCellValue(String.valueOf(v));
 			}
-			
-			CellStyle style = getStyleAt(cell.getRowIndex(), cell.getColumnIndex());
-			if(isWidthBorder(ec.getRowIndex(),ec.getColumnIndex())){
-				StyleDecorate.addBorder(style);
-			}
 			cell.setCellStyle(style);
 		}
 	}
@@ -124,4 +109,48 @@ public class DefaultTemplate extends Template {
 		}
 	}
 
+	@Override
+	public Config getConfig() {
+		if(config==null){
+			config = this.createConfig();
+		}
+		return config;
+	}
+	
+	private Config createConfig(){
+		
+		return new Config(){
+			@Override
+			public CellStyle createStyle() {
+				return wb.createCellStyle();
+			}
+
+			@Override
+			public Font createFont() {
+				return wb.createFont();
+			}
+
+			@Override
+			public DataFormat createDataFormat() {
+				return wb.createDataFormat();
+			}
+
+			@Override
+			protected void init() {
+				CellStyle style = wb.createCellStyle();
+				StyleDecorate.decorateAsTitle(style, wb.createFont());
+				this.setStyle(style, RowType.TITLE);
+				
+				style = wb.createCellStyle();
+				StyleDecorate.decorateAsHeader(style, wb.createFont());
+				this.setStyle(style, RowType.HEADER);
+				
+				this.addBorder(RowType.HEADER);
+				this.addBorder(RowType.BODY);
+				
+				this.addRowHeight(ROW_TITLE, DEFAULT_HEIGHT*2);
+			}
+			
+		};
+	}
 }

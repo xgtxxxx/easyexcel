@@ -28,10 +28,6 @@ class MyPager implements Pager{
 	
 	private List<Object[]> body;
 	
-	private boolean isBorderContents;
-	
-	
-	
 	@Override
 	public String getTitle() {
 		return title;
@@ -52,16 +48,4 @@ class MyPager implements Pager{
 		return body;
 	}
 
-	@Override
-	public boolean isBorderContents() {
-		// TODO Auto-generated method stub
-		return this.isBorderContents;
-	}
-
-	/**
-	 * @param isBorderContents the isBorderContents to set
-	 */
-	public void setBorderContents(boolean isBorderContents) {
-		this.isBorderContents = isBorderContents;
-	}
 }

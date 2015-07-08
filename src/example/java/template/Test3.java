@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import xgt.util.excel.SheetConfig;
+import xgt.util.excel.Config;
 import xgt.util.excel.Template;
 import xgt.util.excel.TemplateFactory;
 import xgt.util.excel.model.Pagers;
@@ -39,21 +39,18 @@ public class Test3 {
 				list.add(data);
 			}
 			MyPager pager = new MyPager("测试" + j, header, list);
-			pager.setBorderContents(true);
 			pagers.addPager(pager);
 		}
 
-		// pagers.setTitleOnlyFirstPage(true);
+		pagers.setTitleOnlyFirstPage(true);
 		pagers.setLineSpacing(1);
 
 		Template t = TemplateFactory.createTemplate(DefaultTemplate.class,
 				pagers);
-
-		SheetConfig config = new SheetConfig();
-		config.addHeightConfig(0, 30f);
-		config.addWidthConfig(2, SheetConfig.DEFAULT_WIDTH * 3);
-		config.addWidthConfig(6, SheetConfig.DEFAULT_WIDTH + 3);
-		t.setConfig(config);
+		
+		Config config = t.getConfig();
+		
+		config.setDefaultWidth(config.getDefaultWidth()*2);
 
 		FileOutputStream fos = null;
 		try {
