@@ -92,7 +92,11 @@ public abstract class Config {
 	
 	private CellStyle getDefaultStyle(){
 		CellStyle s = this.styles.get(RowType.DEFAULT.getName());
-		return s==null?this.createStyle():s;
+		if(s==null){
+			s = this.createStyle();
+			this.styles.put(RowType.DEFAULT.getName(), s);
+		}
+		return s;
 	}
 	
 	public void setStyle(CellStyle style, Region region){
