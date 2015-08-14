@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -18,6 +17,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import xgt.util.common.DateUtil;
 import xgt.util.easyexcel.last.ExcelCellRangeAddress;
@@ -35,7 +35,7 @@ import xgt.util.excel.utils.StyleDecorate;
  */
 public class DefaultTemplate extends Template {
 	
-	private Workbook wb = new HSSFWorkbook();
+	private Workbook wb = new SXSSFWorkbook(500);
 	
 	private Config config;
 	
@@ -52,7 +52,8 @@ public class DefaultTemplate extends Template {
 	
 	private void initSheetWidthConfig(Sheet sheet){
 		Config config = getConfig();
-		sheet.setDefaultColumnWidth(config.getDefaultWidth()*256);
+		//此处会导致excel报：有不可读取的内容。
+//		sheet.setDefaultColumnWidth(config.getDefaultWidth()*256);
 		sheet.setDefaultRowHeightInPoints(config.getDefaultHeight());
 		for (int index : config.getKeysOfWidth()) {
 			sheet.setColumnWidth(index, config.getColumnWidth(index)*256);

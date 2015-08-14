@@ -62,7 +62,7 @@ public class Test1 {
 		
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream("D:/text.xls");
+			fos = new FileOutputStream("D:/text.xlsx");
 			t.build(fos);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
